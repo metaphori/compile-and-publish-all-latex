@@ -12,6 +12,10 @@ inputs:
     description: 'Whether the results should overwrite previous release. Defaults to true.'
     required: false
     default: true
+  texfilter: 
+    description: 'Filter for LaTex files'
+    required: false
+    default: *.tex
 
 runs:
   using: "composite"
@@ -25,7 +29,7 @@ runs:
     - name: Compile LaTeX
       uses: metaphori/compile-latex-action@master
       with:
-        texfilter: 'latex_notes/a*.tex'
+        texfilter: ${{ inputs.texfilter }}
     #- name: Autotag
     #  uses: DanySK/semver-autotag-action@0.1.0
     #  if: inputs.overwrite-release == 'false'
