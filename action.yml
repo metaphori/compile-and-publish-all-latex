@@ -4,50 +4,31 @@ inputs:
   token:  # github token
     description: 'Github token for deployment.'
     required: true
-  diff-enable:
-    description: 'Github token for deployment. Skips deployment otherwise.'
-    required: false
-    default: false
-  diff-files:
-    description: Latex files (globs) to diff, if diff enabled
-    required: false
-    default: |
-      **/*.tex
-  diff-lightweight-tags:
-    description: Whether non-annotated tags should be considered
-    required: false
-    default: false
-  diff-tag-regex:
-    description: Newline-separated list of tags to create differential documents with. Ruby Regex syntax supported.
-    required: false
-    default: |
-      .*
   publish-enable:
     description: 'Whether the results should be deployed on GitHub. Defaults to true.'
+    required: false
+    default: true
+  overwrite-release:
+    description: 'Whether the results should overwrite previous release. Defaults to true.'
     required: false
     default: true
 
 runs:
   using: "composite"
   steps:
-    - name: Make ImageMagik permissive
-      shell: bash
-      run: sudo sed -i 's/rights=".*"/rights="all"/' /etc/ImageMagick-6/policy.xml
+    #- name: Make ImageMagik permissive
+    #  shell: bash
+    #  run: sudo sed -i 's/rights=".*"/rights="all"/' /etc/ImageMagick-6/policy.xml
     # Checkout the repository
     - name: Checkout
       uses: danysk/action-checkout@0.2.3
-    - name: Prepare the differential documents
-      uses: DanySK/auto-latexdiff@64.1.1
-      id: latexdiff
-      if: inputs.diff-enable == 'true'
-      with:
-        files: ${{ inputs.diff-files }}
-        include-lightweight-tags: ${{ inputs.diff-lightweight-tags }}
-        tags: ${{ inputs.diff-tag-regex }}
     - name: Compile LaTeX
-      uses: DanySK/compile-latex-action@0.3.107
-    - name: Autotag
-      uses: DanySK/semver-autotag-action@0.1.0
+      uses: metaphori/compile-latex-action@master
+      with:
+        texfilter: 'latex_notes/a*.tex'
+    #- name: Autotag
+    #  uses: DanySK/semver-autotag-action@0.1.0
+    #  if: inputs.overwrite-release == 'false'
     - name: Deploy
       if: inputs.publish-enable == 'true'
       env:
@@ -63,7 +44,7 @@ runs:
               || $GITHUB_REF == 'refs/heads/default'
               || $GITHUB_REF == "refs/tags"*
           ]]; then
-            TAG=$(git describe --tags --exact-match HEAD)
+            TAG=1.0 # $(git describe --tags --exact-match HEAD)
             hub release create -m "$(git tag -l --format='%(contents)' "$TAG")" "$TAG" || true
             while IFS= read -r file; do
               pdf="${file%.*}.pdf"
