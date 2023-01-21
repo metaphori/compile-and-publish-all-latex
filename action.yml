@@ -48,7 +48,7 @@ runs:
               || $GITHUB_REF == 'refs/heads/default'
               || $GITHUB_REF == "refs/tags"*
           ]]; then
-            TAG=1.0 # $(git describe --tags --exact-match HEAD)
+            TAG="$(git describe --tags --exact-match HEAD)"
             hub release create -m "$(git tag -l --format='%(contents)' "$TAG")" "$TAG" || true
             while IFS= read -r file; do
               pdf="${file%.*}.pdf"
