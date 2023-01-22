@@ -15,7 +15,7 @@ inputs:
   texfilter: 
     description: 'Filter for LaTex files'
     required: false
-    default: '*.tex'
+    default: ''
 
 runs:
   using: "composite"
@@ -26,10 +26,20 @@ runs:
     # Checkout the repository
     - name: Checkout
       uses: danysk/action-checkout@0.2.3
+    - name: Install hub
+        uses: geertvdc/setup-hub@master
+    - name: run hub commands
+        env:
+          GITHUB_USER: ${{ secrets.GITHUB_USER }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+            hub release show slides --format "%pr"
+            git log --since="$(hub release show slides --format "%pr")" --name-only --pretty=format: | sort | uniq | sed -e 's/.*\///g' | grep -e '.*\.tex' | tr '\n' ','
+            export TEXFILTER=$(git log --since="$(hub release show slides --format "%pr")" --name-only --pretty=format: | sort | uniq | sed -e 's/.*\///g' | grep -e '.*\.tex' | tr '\n' ',')
     - name: Compile LaTeX
       uses: metaphori/compile-latex-action@master
       with:
-        texfilter: ${{ inputs.texfilter }}
+        texfilter: ${{ inputs.texfilter || env.TEXFILTER }}
     #- name: Autotag
     #  uses: DanySK/semver-autotag-action@0.1.0
     #  if: inputs.overwrite-release == 'false'
@@ -49,7 +59,7 @@ runs:
               || $GITHUB_REF == "refs/tags"*
           ]]; then
             TAG="$(git describe --tags --abbrev=0 HEAD)"
-            hub release create -m "$(git tag -l --format='%(contents)' "$TAG")" "$TAG" || true
+            hub release create -m "$(date -I)" "$TAG" || true
             while IFS= read -r file; do
               pdf="${file%.*}.pdf"
               echo "Delivering file $pdf"
@@ -59,3 +69,9 @@ runs:
             echo "Not running deployment from unknown source: $GITHUB_REF"
           fi
         fi
+# tex files which have a corresponding pdf in assets of a release:
+#   hub release show <RELEASENAME> --show-downloads | sed -e 's/.*\///g' | grep -e '.*\.pdf' | sed s/pdf/tex/
+# date of release publication
+#   hub release show <RELEASENAME> --format "%pI" | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}'
+# tex files changed since release
+#   git log --since="$(hub release show <RELEASENAME> --format "%pr")" --name-only --pretty=format: | sort | uniq
