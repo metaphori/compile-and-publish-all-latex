@@ -27,15 +27,15 @@ runs:
     - name: Checkout
       uses: danysk/action-checkout@0.2.3
     - name: Install hub
-        uses: geertvdc/setup-hub@master
+      uses: geertvdc/setup-hub@master
     - name: run hub commands
-        env:
-          GITHUB_USER: ${{ secrets.GITHUB_USER }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-            hub release show slides --format "%pr"
-            git log --since="$(hub release show slides --format "%pr")" --name-only --pretty=format: | sort | uniq | sed -e 's/.*\///g' | grep -e '.*\.tex' | tr '\n' ','
-            export TEXFILTER=$(git log --since="$(hub release show slides --format "%pr")" --name-only --pretty=format: | sort | uniq | sed -e 's/.*\///g' | grep -e '.*\.tex' | tr '\n' ',')
+      env:
+        GITHUB_USER: ${{ secrets.GITHUB_USER }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        hub release show slides --format "%pr"
+        git log --since="$(hub release show slides --format "%pr")" --name-only --pretty=format: | sort | uniq | sed -e 's/.*\///g' | grep -e '.*\.tex' | tr '\n' ','
+        export TEXFILTER=$(git log --since="$(hub release show slides --format "%pr")" --name-only --pretty=format: | sort | uniq | sed -e 's/.*\///g' | grep -e '.*\.tex' | tr '\n' ',')
     - name: Compile LaTeX
       uses: metaphori/compile-latex-action@master
       with:
