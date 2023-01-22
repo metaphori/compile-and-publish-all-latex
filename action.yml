@@ -29,9 +29,6 @@ runs:
     - name: Install hub
       uses: geertvdc/setup-hub@master
     - name: run hub commands
-      secrets:
-        GITHUB_USER: ${{ secrets.GITHUB_USER }}
-#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       shell: bash 
       run: |
         hub release show slides --format "%pr"
