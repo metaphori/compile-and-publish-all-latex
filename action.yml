@@ -26,8 +26,8 @@ runs:
     # Checkout the repository
     - name: Checkout
       uses: danysk/action-checkout@0.2.3
-    - name: Install hub
-      uses: geertvdc/setup-hub@master
+#    - name: Install hub
+#      uses: geertvdc/setup-hub@master
     - name: run hub commands
       shell: bash 
       run: |
