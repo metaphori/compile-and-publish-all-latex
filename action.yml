@@ -38,7 +38,7 @@ runs:
         git log --since="$(hub release show $TAG --format "%pr")" --name-only --pretty=format: | sort | uniq | grep -e '.*\.tex' | tr '\n' ',' | sed -rn "s/(.*),/\1/p"
         export TEXFILTER=$(git log --since="$(hub release show $TAG --format "%pr")" --name-only --pretty=format: | sort | uniq | grep -e '.*\.tex' | tr '\n' ',' | sed -rn "s/(.*),/\1/p")
         if [[ "${{ inputs.texfilter }}" ]]; then
-          export TEXFILTER = "${{ inputs.texfilter }}"
+          export TEXFILTER="${{ inputs.texfilter }}"
         fi
         echo "TEXFILTER=$(echo $TEXFILTER)" 
         echo "TEXFILTER=$(echo $TEXFILTER)" >> $GITHUB_ENV
