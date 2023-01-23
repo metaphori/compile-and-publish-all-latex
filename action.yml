@@ -40,6 +40,8 @@ runs:
         if [[ "${{ inputs.texfilter }}" ]]; then
           export TEXFILTER = "${{ inputs.texfilter }}"
         fi
+        echo "TEXFILTER=$(echo $TEXFILTER)" 
+        echo "TEXFILTER=$(echo $TEXFILTER)" >> $GITHUB_ENV
     - name: Compile LaTeX
       uses: metaphori/compile-latex-action@master
       with:
