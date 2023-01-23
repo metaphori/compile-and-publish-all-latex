@@ -32,7 +32,7 @@ runs:
       shell: bash 
       run: |
         export TAG="$(git describe --tags --abbrev=0 HEAD)" 
-        echo -e "github.com:\n- user: $GITHUB_USER\n  oauth_token: $GITHUB_TOKEN\n  protocol: https" > ~/.config/hub
+        echo -e "github.com:\n- user: $GITHUB_USER\n  oauth_token: $GITHUB_TOKEN\n  protocol: https" > $HOME/.config/hub
         hub release show $TAG --format "%pr"
         git log --since="$(hub release show $TAG --format "%pr")" --name-only --pretty=format: | sort | uniq | sed -e 's/.*\///g' | grep -e '.*\.tex' | tr '\n' ','
         export TEXFILTER=$(git log --since="$(hub release show $TAG --format "%pr")" --name-only --pretty=format: | sort | uniq | sed -e 's/.*\///g' | grep -e '.*\.tex' | tr '\n' ',')
