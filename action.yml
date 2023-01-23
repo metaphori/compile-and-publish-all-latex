@@ -25,7 +25,7 @@ runs:
     #  run: sudo sed -i 's/rights=".*"/rights="all"/' /etc/ImageMagick-6/policy.xml
     # Checkout the repository
     - name: Checkout
-      uses: danysk/action-checkout@0.2.3
+      uses: danysk/action-checkout@0.2.5
 #    - name: Install hub
 #      uses: geertvdc/setup-hub@master
     - name: run hub commands
