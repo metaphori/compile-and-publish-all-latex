@@ -31,7 +31,7 @@ runs:
     - name: run hub commands
       shell: bash 
       run: |
-        echo "github.com:\n- user: $GITHUB_USER\n  oauth_token: $OAUTH_TOKEN\n  protocol: https" > ~/.config/hub
+        echo -e "github.com:\n- user: $GITHUB_USER\n  oauth_token: $GITHUB_TOKEN\n  protocol: https" > ~/.config/hub
         hub release show slides --format "%pr"
         git log --since="$(hub release show slides --format "%pr")" --name-only --pretty=format: | sort | uniq | sed -e 's/.*\///g' | grep -e '.*\.tex' | tr '\n' ','
         export TEXFILTER=$(git log --since="$(hub release show slides --format "%pr")" --name-only --pretty=format: | sort | uniq | sed -e 's/.*\///g' | grep -e '.*\.tex' | tr '\n' ',')
