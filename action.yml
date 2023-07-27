@@ -16,6 +16,10 @@ inputs:
     description: 'Filter for LaTex files'
     required: false
     default: ''
+  limit:
+    description: 'Limit LaTeX files to build to a number N'
+    required: false
+    default: 20
 
 runs:
   using: "composite"
@@ -46,6 +50,7 @@ runs:
       uses: metaphori/compile-latex-action@master
       with:
         texfilter: ${{ env.TEXFILTER }}
+        limit: ${{ inputs.limit }}
     #- name: Autotag
     #  uses: DanySK/semver-autotag-action@0.1.0
     #  if: inputs.overwrite-release == 'false'
