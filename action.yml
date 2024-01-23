@@ -37,10 +37,10 @@ runs:
       run: |
         export TAG="$(git describe --tags --abbrev=0 HEAD)" 
         echo -e "github.com:\n- user: $GITHUB_USER\n  oauth_token: $GITHUB_TOKEN\n  protocol: https" > $HOME/.config/hub
-        hub release show $TAG --format "%pr"
+        gh release create $TAG # --format "%pr"
         # for only filenames: | sed -e 's/.*\///g'
-        git log --since="$(hub release show $TAG --format "%pr")" --name-only --pretty=format: | sort | uniq | grep -e '.*\.tex' | tr '\n' ',' | sed -rn "s/(.*),/\1/p"
-        export TEXFILTER=$(git log --since="$(hub release show $TAG --format "%pr")" --name-only --pretty=format: | sort | uniq | grep -e '.*\.tex' | tr '\n' ',' | sed -rn "s/(.*),/\1/p")
+        git log --since="$(gh release create $TAG)" --name-only --pretty=format: | sort | uniq | grep -e '.*\.tex' | tr '\n' ',' | sed -rn "s/(.*),/\1/p"
+        export TEXFILTER=$(git log --since="$(gh release create $TAG)" --name-only --pretty=format: | sort | uniq | grep -e '.*\.tex' | tr '\n' ',' | sed -rn "s/(.*),/\1/p")
         if [[ "${{ inputs.texfilter }}" ]]; then
           export TEXFILTER="${{ inputs.texfilter }}"
         fi
@@ -70,7 +70,7 @@ runs:
               || $GITHUB_REF == "refs/tags"*
           ]]; then
             TAG="$(git describe --tags --abbrev=0 HEAD)"
-            hub release create -m "$(date -I)" "$TAG" || true
+            gh release create "$TAG" --notes "$(date -I)" || true
             while IFS= read -r file; do
               pdf="${file%.*}.pdf"
               echo "Delivering file $pdf"
