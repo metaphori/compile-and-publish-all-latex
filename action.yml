@@ -39,7 +39,7 @@ runs:
     - name: run hub commands
       shell: bash 
       run: |
-        export TAG="$(git describe --tags --always HEAD)" 
+        export TAG="$(git describe --tags --always --abbrev=0 HEAD)" 
         echo -e "github.com:\n- user: $GITHUB_USER\n  oauth_token: $GITHUB_TOKEN\n  protocol: https" > $HOME/.config/hub
         gh release view $TAG # --format "%pr"
         # for only filenames: | sed -e 's/.*\///g'
