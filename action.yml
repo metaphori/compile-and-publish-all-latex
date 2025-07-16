@@ -39,9 +39,9 @@ runs:
     - name: run hub commands
       shell: bash 
       run: |
-        export TAG="$(git describe --tags --always --abbrev=0 HEAD)" 
+        export TAG="$(git describe --tags --abbrev=0 HEAD || echo 'slides')" 
         echo -e "github.com:\n- user: $GITHUB_USER\n  oauth_token: $GITHUB_TOKEN\n  protocol: https" > $HOME/.config/hub
-        echo "Extracted TAG: '$TAG'"
+        echo "Extracted TAG = $TAG"
         gh release view $TAG # --format "%pr"
         # for only filenames: | sed -e 's/.*\///g'
         git log --since="$(gh release view $TAG)" --name-only --pretty=format: | sort | uniq | grep -e '.*\.tex' | tr '\n' ',' | sed -rn "s/(.*),/\1/p"
@@ -75,7 +75,7 @@ runs:
               || $GITHUB_REF == 'refs/heads/default'
               || $GITHUB_REF == "refs/tags"*
           ]]; then
-            TAG="$(git describe --tags --abbrev=0 HEAD)"
+            TAG="$(git describe --tags --abbrev=0 HEAD || echo 'slides')" 
             gh release edit "$TAG" --notes "$(date -I)" || true
             while IFS= read -r file; do
               pdf="${file%.*}.pdf"
