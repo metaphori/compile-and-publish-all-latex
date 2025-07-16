@@ -41,6 +41,7 @@ runs:
       run: |
         export TAG="$(git describe --tags --always --abbrev=0 HEAD)" 
         echo -e "github.com:\n- user: $GITHUB_USER\n  oauth_token: $GITHUB_TOKEN\n  protocol: https" > $HOME/.config/hub
+        echo "Extracted TAG: '$TAG'"
         gh release view $TAG # --format "%pr"
         # for only filenames: | sed -e 's/.*\///g'
         git log --since="$(gh release view $TAG)" --name-only --pretty=format: | sort | uniq | grep -e '.*\.tex' | tr '\n' ',' | sed -rn "s/(.*),/\1/p"
